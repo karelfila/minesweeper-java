@@ -20,7 +20,7 @@ public class Minesweeper {
         for (int i = 0; i < columns; i++) {
             for (int j = 0; j < rows; j++) {
                 field[i][j] = 0;     //celé pole bude na začátku 0 A.K.A Hidden
-                if (r.nextFloat() < 0.2) {
+                if (r.nextFloat() < 0.1) {
                     bombs[i][j] = true;
                 } else {
                     bombs[i][j] = false;
@@ -56,9 +56,13 @@ public class Minesweeper {
      * @param y Y
      */
     public void toggleFieldState(int x, int y) {
-        field[x][y] = field[x][y] + 1;
-        if (field[x][y] == 4) {
-            field[x][y] = 0;
+        if(field[x][y] == 0) {
+            field[x][y] = 2;
+        } else {
+            field[x][y] = field[x][y] + 1;
+            if (field[x][y] == 4) {
+                field[x][y] = 0;
+            }
         }
         System.out.println("Toggle Reveal");
     }
@@ -71,12 +75,22 @@ public class Minesweeper {
      * @param y Y
      */
     public void reveal(int x, int y) {
-        System.out.println("Reveal");
-
+        if(x >= 0 && y >= 0 && x < columnsCount && y < rowsCount){
         if (field[x][y] == 0) {
             field[x][y] = 1;
+            if(getAdjacentBombCount(x, y) == 0) {
+                System.out.println("Reveal");
+                reveal(x - 1, y -1);
+                reveal(x, y- 1);
+                reveal(x + 1, y - 1);
+                reveal(x - 1, y);
+                reveal(x + 1, y);
+                reveal(x - 1, y + 1);
+                reveal(x, y + 1);
+                reveal(x + 1, y + 1);
+            }
         }
-
+    }
     }
 
     /**
@@ -107,10 +121,12 @@ public class Minesweeper {
             if(isBombOnPosition(x + 1, y)) {
                 b++;
             }
-            if(y > 0){
-                if(isBombOnPosition(x + 1, y - 1)){   //vpravo nahoře
+            if(y > 0) {
+                if (isBombOnPosition(x + 1, y - 1)) {   //vpravo nahoře
                     b++;
                 }
+            }
+            if(y < rowsCount - 1) {
                 if(isBombOnPosition(x + 1, y + 1)){   //vpravo dole
                     b++;
                 }

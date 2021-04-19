@@ -30,12 +30,12 @@ public class Main {
                 int finalJ = j;
                 btn.setMouseClick(() -> {
                     logic.reveal(finalJ, finalI);
-                    btn.setBackground(new Color(255, 255, 255));
+                //    btn.setBackground(new Color(255, 255, 255));
                     redraw(logic);
                 });
                 btn.setContextClick(() -> {
                     logic.toggleFieldState(finalJ, finalI);
-                    btn.setBackground(new Color(255, 255, 255));
+                   // btn.setBackground(new Color(255, 255, 255));
                     redraw(logic);
                 });
             }
@@ -47,34 +47,46 @@ public class Main {
     }
 
     private static void redraw(Minesweeper logic) {
+        String lbl = "";
       if(logic.didWin())
           JOptionPane.showMessageDialog(null, "You won!");
-      else if(logic.didLoose())
-          JOptionPane.showMessageDialog(null, "You lost!");
+      else if(logic.didLoose()) {
+          for (int i = 0; i < cells.length; i++) {
+              for (int j = 0; j < cells[0].length; j++) {
+                  if(logic.isBombOnPosition(j, i)) {
+                      cells[i][j].setText("\uD83D\uDCA3");
+                      lbl = "\uD83D\uDCA3";
+                  }
+              }
+          }
+          JOptionPane.showMessageDialog(null, "God: You stepped on a mine. GG!");
+      }
 
-        for (int i = 0; i < cells.length; i++) {
-            for (int j = 0; j < cells[0].length; j++) {
-                int field = logic.getField(j, i);
+        if(!logic.didLoose()) {
+            for (int i = 0; i < cells.length; i++) {
+                for (int j = 0; j < cells[0].length; j++) {
+                    int field = logic.getField(j, i);
 
              /*   cells[i][j].setBackground(Color.darkGray); //zakomentováno aby se to neměnilo zpátky na šedou
                 cells[i][j].setForeground(Color.white); */
 
-                if (field == 0) {
-                    cells[i][j].setText("");
-                } else if (field == 1) {
-                    cells[i][j].setBackground(Color.white);
-                    cells[i][j].setForeground(Color.darkGray);
-
-                    int bombCount = logic.getAdjacentBombCount(j, i);
-                    if (bombCount > 0) {
-                        cells[i][j].setForeground(new Color(bombCount / 8f, 0, 0));
-                        cells[i][j].setText(bombCount + "");
-                    } else
+                    if (field == 0) {
                         cells[i][j].setText("");
-                } else if (field == 2) {
-                    cells[i][j].setText("\uD83D\uDEA9");
-                } else if (field == 3) {
-                    cells[i][j].setText("?");
+                    } else if (field == 1) {
+                        cells[i][j].setBackground(Color.white);
+                        cells[i][j].setForeground(Color.darkGray);
+
+                        int bombCount = logic.getAdjacentBombCount(j, i);
+                        if (bombCount > 0) {
+                            cells[i][j].setForeground(new Color(bombCount / 8f, 0, 0));
+                            cells[i][j].setText(bombCount + "");
+                        } else
+                            cells[i][j].setText("");
+                    } else if (field == 2) {
+                        cells[i][j].setText("\uD83D\uDEA9");
+                    } else if (field == 3) {
+                        cells[i][j].setText("?");
+                    }
                 }
             }
         }
